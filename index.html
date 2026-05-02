@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cooking Lessons Flash Games</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://unpkg.com/@ruffle-rs/ruffle@latest/dist/ruffle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@latest/dist/ruffle.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -13,7 +13,7 @@
       <p class="eyebrow">Flash game collection</p>
       <h1>Cooking Lessons</h1>
       <p class="lead">Play the classic Papa's flash games directly from GitHub Pages using Ruffle.</p>
-      <p class="note">If the game does not start immediately, try refreshing the page or opening it in a browser that supports WebAssembly.</p>
+      <p class="note">Use a hosted server or GitHub Pages and a browser with JavaScript and WebAssembly enabled. If it still fails, refresh the page.</p>
     </div>
   </header>
 
@@ -37,10 +37,10 @@
 
   <script>
     const games = [
-      { title: "Papa's Burgeria", path: "flash-games/Papas Burgeria.swf" },
-      { title: "Papa's Freezeria", path: "flash-games/Papas Freezeria.swf" },
-      { title: "Papa's Pancakeria", path: "flash-games/Papas Pancakeria.swf" },
-      { title: "Papa's Pizzeria", path: "flash-games/Papas Pizzeria.swf" }
+      { title: "Papa's Burgeria", path: "flash-games/Papas%20Burgeria.swf" },
+      { title: "Papa's Freezeria", path: "flash-games/Papas%20Freezeria.swf" },
+      { title: "Papa's Pancakeria", path: "flash-games/Papas%20Pancakeria.swf" },
+      { title: "Papa's Pizzeria", path: "flash-games/Papas%20Pizzeria.swf" }
     ];
 
     function loadGame(index) {
@@ -53,12 +53,11 @@
         return;
       }
 
-      const ruffle = window.RufflePlayer.newest();
-      const player = ruffle.createPlayer();
-      player.style.width = '100%';
-      player.style.height = '650px';
-      playerContainer.appendChild(player);
-      player.load(encodeURI(game.path));
+      const rufflePlayer = document.createElement('ruffle-player');
+      rufflePlayer.src = encodeURI(game.path);
+      rufflePlayer.style.width = '100%';
+      rufflePlayer.style.height = '650px';
+      playerContainer.appendChild(rufflePlayer);
 
       document.getElementById('selected-game').textContent = game.title;
       document.querySelectorAll('.game-button').forEach((button, idx) => {
