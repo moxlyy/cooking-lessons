@@ -37,10 +37,10 @@
 
   <script>
     const games = [
-      { title: "Papa's Burgeria", path: "flash-games/Papas%20Burgeria.swf" },
-      { title: "Papa's Freezeria", path: "flash-games/Papas%20Freezeria.swf" },
-      { title: "Papa's Pancakeria", path: "flash-games/Papas%20Pancakeria.swf" },
-      { title: "Papa's Pizzeria", path: "flash-games/Papas%20Pizzeria.swf" }
+      { title: "Papa's Burgeria", path: "flash-games/Papas Burgeria.swf" },
+      { title: "Papa's Freezeria", path: "flash-games/Papas Freezeria.swf" },
+      { title: "Papa's Pancakeria", path: "flash-games/Papas Pancakeria.swf" },
+      { title: "Papa's Pizzeria", path: "flash-games/Papas Pizzeria.swf" }
     ];
 
     function loadGame(index) {
@@ -54,7 +54,7 @@
       }
 
       const rufflePlayer = document.createElement('ruffle-player');
-      rufflePlayer.src = encodeURI(game.path);
+      rufflePlayer.src = game.path;
       rufflePlayer.style.width = '100%';
       rufflePlayer.style.height = '650px';
       playerContainer.appendChild(rufflePlayer);
