@@ -18,48 +18,67 @@
   </header>
 
   <main class="container">
-    <section class="grid">
-      <article class="card">
-        <h2>Papa's Burgeria</h2>
-        <div class="game-frame">
-          <object type="application/x-shockwave-flash" data="flash-games/Papas%20Burgeria.swf" width="100%" height="600">
-            <param name="movie" value="flash-games/Papas%20Burgeria.swf">
-            <p>Flash content is not available. Your browser may no longer support Flash. Please use a modern browser with JavaScript enabled.</p>
-          </object>
+    <section class="card card-panel">
+      <div class="game-selector">
+        <div>
+          <p class="eyebrow">Choose a game</p>
+          <h2 id="selected-game">Papa's Burgeria</h2>
+          <p class="lead">Click a title below to load the game in the emulator. The page uses Ruffle and requires JavaScript with WebAssembly support.</p>
+          <div id="game-list" class="button-grid"></div>
         </div>
-      </article>
-
-      <article class="card">
-        <h2>Papa's Freezeria</h2>
-        <div class="game-frame">
-          <object type="application/x-shockwave-flash" data="flash-games/Papas%20Freezeria.swf" width="100%" height="600">
-            <param name="movie" value="flash-games/Papas%20Freezeria.swf">
-            <p>Flash content is not available. Your browser may no longer support Flash. Please use a modern browser with JavaScript enabled.</p>
-          </object>
-        </div>
-      </article>
-
-      <article class="card">
-        <h2>Papa's Pancakeria</h2>
-        <div class="game-frame">
-          <object type="application/x-shockwave-flash" data="flash-games/Papas%20Pancakeria.swf" width="100%" height="600">
-            <param name="movie" value="flash-games/Papas%20Pancakeria.swf">
-            <p>Flash content is not available. Your browser may no longer support Flash. Please use a modern browser with JavaScript enabled.</p>
-          </object>
-        </div>
-      </article>
-
-      <article class="card">
-        <h2>Papa's Pizzeria</h2>
-        <div class="game-frame">
-          <object type="application/x-shockwave-flash" data="flash-games/Papas%20Pizzeria.swf" width="100%" height="600">
-            <param name="movie" value="flash-games/Papas%20Pizzeria.swf">
-            <p>Flash content is not available. Your browser may no longer support Flash. Please use a modern browser with JavaScript enabled.</p>
-          </object>
-        </div>
-      </article>
+      </div>
+      <div class="game-frame" id="player-container">
+        <noscript>
+          <p>JavaScript is required to run the Flash emulator. Please enable JavaScript and refresh the page.</p>
+        </noscript>
+      </div>
     </section>
   </main>
+
+  <script>
+    const games = [
+      { title: "Papa's Burgeria", path: "flash-games/Papas Burgeria.swf" },
+      { title: "Papa's Freezeria", path: "flash-games/Papas Freezeria.swf" },
+      { title: "Papa's Pancakeria", path: "flash-games/Papas Pancakeria.swf" },
+      { title: "Papa's Pizzeria", path: "flash-games/Papas Pizzeria.swf" }
+    ];
+
+    function loadGame(index) {
+      const game = games[index];
+      const playerContainer = document.getElementById('player-container');
+      playerContainer.innerHTML = '';
+
+      if (!window.RufflePlayer) {
+        playerContainer.innerHTML = '<p>Ruffle did not load. Please refresh the page or use a browser that supports WebAssembly.</p>';
+        return;
+      }
+
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
+      player.style.width = '100%';
+      player.style.height = '650px';
+      playerContainer.appendChild(player);
+      player.load(encodeURI(game.path));
+
+      document.getElementById('selected-game').textContent = game.title;
+      document.querySelectorAll('.game-button').forEach((button, idx) => {
+        button.classList.toggle('active', idx === index);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const list = document.getElementById('game-list');
+      games.forEach((game, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'game-button';
+        button.textContent = game.title;
+        button.addEventListener('click', () => loadGame(index));
+        list.appendChild(button);
+      });
+      loadGame(0);
+    });
+  </script>
 
   <footer class="site-footer">
     <div class="container">
