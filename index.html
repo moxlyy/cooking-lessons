@@ -62,7 +62,17 @@
   </main>
 
   <!-- Ruffle -->
-  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+      autoplay: "on",
+      unmuteOverlay: "hidden",
+      letterbox: "off",
+    };
+  </script>
+  
+  
+  <script src="./ruffle/ruffle.js"></script>
 
   <script>
     const games = [
