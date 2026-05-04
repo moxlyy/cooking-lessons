@@ -3,16 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cooking Lessons Flash Games</title>
+  <title>cooking lessons</title>
   <link rel="stylesheet" href="styles.css">
+
+  <style>
+    #player-container:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #player-container:fullscreen ruffle-player {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
 </head>
+
 <body>
   <header class="site-header">
     <div class="container">
-      <p class="eyebrow">Flash game collection</p>
-      <h1>Cooking Lessons</h1>
-      <p class="lead">Play the classic Papa's flash games directly from GitHub Pages using Ruffle.</p>
-      <p class="note">Use a hosted server or GitHub Pages and a browser with JavaScript and WebAssembly enabled. If it still fails, refresh the page.</p>
+      <p class="eyebrow">cooking lessons</p>
+      <h1>cooking lessons</h1>
+      <p class="lead">play the classic Papa's flash games directly from GitHub Pages using Ruffle.</p>
     </div>
   </header>
 
@@ -20,99 +36,120 @@
     <section class="card card-panel">
       <div class="game-selector">
         <div>
-          <p class="eyebrow">Choose a game</p>
+          <p class="eyebrow">choose a game</p>
           <h2 id="selected-game">Papa's Burgeria</h2>
-          <p class="lead">Click a title below to load the game in the emulator. The page uses Ruffle and requires JavaScript with WebAssembly support.</p>
-          <div id="status" class="status-panel">Waiting for Ruffle to initialize...</div>
-          <p class="note">If your environment blocks external scripts, place the official Ruffle self-hosted build files into <code>/ruffle/</code>. Include <code>ruffle.js</code>, the two <code>core.ruffle.*.js</code> chunk files, and the two <code>.wasm</code> files with their original hashed names. If <code>ruffle.js</code> contains only <code>//# sourceMappingURL=ruffle.js.map</code>, it is not the proper runtime bundle.</p>
+
+          <p class="lead">
+            click a title below to load the game in the emulator. requires WebAssembly.
+          </p>
+
+          <div id="status" class="status-panel">waiting for Ruffle...</div>
+
+          <button id="fullscreen-btn" class="game-button" style="margin-top: 0.75rem;">
+            fullscreen
+          </button>
+
           <div id="game-list" class="button-grid"></div>
         </div>
       </div>
+
       <div class="game-frame" id="player-container">
         <noscript>
-          <p>JavaScript is required to run the Flash emulator. Please enable JavaScript and refresh the page.</p>
+          <p>JavaScript is required to run the emulator.</p>
         </noscript>
       </div>
     </section>
   </main>
 
+  <!-- Ruffle -->
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
-<script>
-  const games = [
-    { title: "Papa's Burgeria", path: "flash-games/Papas_Burgeria.swf" },
-    { title: "Papa's Freezeria", path: "flash-games/Papas_Freezeria.swf" },
-    { title: "Papa's Pancakeria", path: "flash-games/Papas_Pancakeria.swf" },
-    { title: "Papa's Pizzeria", path: "flash-games/Papas_Pizzeria.swf" }
-  ];
+  <script>
+    const games = [
+      { title: "Papa's Burgeria", path: "flash-games/Papas_Burgeria.swf" },
+      { title: "Papa's Freezeria", path: "flash-games/Papas_Freezeria.swf" },
+      { title: "Papa's Pancakeria", path: "flash-games/Papas_Pancakeria.swf" },
+      { title: "Papa's Pizzeria", path: "flash-games/Papas_Pizzeria.swf" }
+    ];
 
-  function setStatus(message) {
-    const statusElement = document.getElementById('status');
-    if (statusElement) {
-      statusElement.textContent = message;
+    function setStatus(msg) {
+      document.getElementById("status").textContent = msg;
     }
-  }
 
-  function buildGameButtons() {
-    const list = document.getElementById('game-list');
-    games.forEach((game, index) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'game-button';
-      button.textContent = game.title;
-      button.addEventListener('click', () => loadGame(index));
-      list.appendChild(button);
+    function buildGameButtons() {
+      const list = document.getElementById("game-list");
+
+      games.forEach((game, i) => {
+        const btn = document.createElement("button");
+        btn.className = "game-button";
+        btn.textContent = game.title;
+        btn.onclick = () => loadGame(i);
+        list.appendChild(btn);
+      });
+    }
+
+    function loadGame(index) {
+      const game = games[index];
+      const container = document.getElementById("player-container");
+
+      container.innerHTML = "";
+
+      if (!window.RufflePlayer) {
+        setStatus("Ruffle failed to load");
+        return;
+      }
+
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
+
+      player.style.width = "100%";
+      player.style.height = "650px";
+
+      container.appendChild(player);
+      player.load(game.path);
+
+      document.getElementById("selected-game").textContent = game.title;
+
+      document.querySelectorAll(".game-button").forEach((b, i) => {
+        b.classList.toggle("active", i === index);
+      });
+    }
+
+    function toggleFullscreen() {
+      const container = document.getElementById("player-container");
+
+      if (!document.fullscreenElement) {
+        container.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    }
+
+    window.addEventListener("load", () => {
+      if (!window.WebAssembly) {
+        setStatus("WebAssembly not supported in this browser.");
+        return;
+      }
+
+      if (!window.RufflePlayer) {
+        setStatus("Ruffle failed to load");
+        return;
+      }
+
+      setStatus("Ruffle loaded. ready to play");
+
+      buildGameButtons();
+      loadGame(0);
+
+      document
+        .getElementById("fullscreen-btn")
+        .addEventListener("click", toggleFullscreen);
     });
-  }
-
-  function loadGame(index) {
-    const game = games[index];
-    const container = document.getElementById("player-container");
-    container.innerHTML = '';
-
-    if (!window.RufflePlayer) {
-      container.innerHTML = "<p>Ruffle failed to load.</p>";
-      setStatus("Ruffle is not available.");
-      return;
-    }
-
-    const ruffle = window.RufflePlayer.newest();
-    const player = ruffle.createPlayer();
-
-    player.style.width = "100%";
-    player.style.height = "650px";
-
-    container.appendChild(player);
-    player.load(game.path);
-
-    document.getElementById('selected-game').textContent = game.title;
-
-    document.querySelectorAll('.game-button').forEach((btn, i) => {
-      btn.classList.toggle('active', i === index);
-    });
-  }
-
-  window.addEventListener("load", () => {
-    if (!window.WebAssembly) {
-      setStatus("WebAssembly not supported. Ruffle cannot run.");
-      return;
-    }
-
-    if (!window.RufflePlayer) {
-      setStatus("Ruffle failed to load from CDN.");
-      return;
-    }
-
-    setStatus("Ruffle loaded. Ready to play 🎮");
-
-    buildGameButtons();
-    loadGame(0);
-  });
-</script>
+  </script>
 
   <footer class="site-footer">
     <div class="container">
-      <p>Built for GitHub Pages with <a href="https://ruffle.rs/" target="_blank" rel="noreferrer">Ruffle</a> Flash emulation.</p>
+      <p>built for GitHub Pages with Ruffle.</p>
     </div>
   </footer>
 </body>
